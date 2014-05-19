@@ -1,0 +1,63 @@
+{
+	"name": "fintech-fab/mpsp-api",
+	"license": "Apache-2.0",
+	"authors": [
+		{
+			"name": "FINTECH_FAB",
+			"email": "dev@fintech-fab.ru"
+		},
+		{
+			"name": "Andrey Perepechaev",
+			"email": "a.perepechaev@fintech-fab.ru"
+		},
+		{
+			"name": "Vladimir Yuldashev",
+			"email": "misterio92@gmail.com"
+		},
+		{
+			"name": "Mikhail Novikov",
+			"email": "mikhail.e.novikov@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.5",
+		"laravel/framework": "4.1.*"
+	},
+	"require-dev": {
+		"barryvdh/laravel-ide-helper": "1.*",
+
+		"iron-io/iron_mq": "dev-master",
+
+		"phpunit/phpunit": "4.2.*@dev",
+		"phpunit/php-code-coverage": "3.0.*@dev",
+		"mockery/mockery": "dev-master"
+	},
+	"autoload": {
+		"classmap": [
+			"app/commands",
+			"app/controllers",
+			"app/database/migrations",
+			"app/database/seeds",
+			"app/tests/TestCase.php"
+		],
+		"psr-0": {
+			"FintechFab\\MPSP": "app/"
+		}
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"php artisan optimize"
+		],
+		"post-update-cmd": [
+			"php artisan clear-compiled",
+			"php artisan optimize"
+		],
+		"post-create-project-cmd": [
+			"php artisan key:generate"
+		]
+	},
+	"config": {
+		"preferred-install": "dist"
+	},
+	"minimum-stability": "dev"
+}

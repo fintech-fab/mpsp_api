@@ -1,0 +1,12 @@
+/app/config/local
+/app/config/production
+/bootstrap/compiled.php
+/vendor
+_ide_helper.php
+_ide_helper_models.php
+composer.phar
+composer.lock
+phpunit
+.DS_Store
+Thumbs.db
+.idea

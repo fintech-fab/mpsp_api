@@ -1,0 +1,83 @@
+<?php
+
+use Illuminate\Validation\Validator as Validation;
+use FintechFab\MPSP\Validator\CardValidator;
+use FintechFab\MPSP\Validator\TransferValidator;
+
+class CardValidatorTest extends TestCase
+{
+
+	/**
+	 * @var \Mockery\Expectation|\Mockery\MockInterface
+	 */
+	private $validator;
+
+	/**
+	 * @var TransferValidator
+	 */
+	private $cardValidator;
+
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->validator = $this->mock(Validation::class);
+
+		$this->cardValidator = new CardValidator($this->validator);
+	}
+
+	/**
+	 * Валидация трансфера для отправки
+	 *
+	 * успех
+	 */
+	public function testDoValidate()
+	{
+		$input = [
+			'number'       => '3213213',
+			'expire_month' => 11,
+			'expire_year'  => 18,
+			'cvv'          => 323,
+		];
+
+		$rules = [
+			'number'       => [
+				'required',
+				'luhn',
+			],
+			'expire_month' => [
+				'required',
+				'integer',
+				'max: 12',
+			],
+			'expire_year'  => [
+				'required',
+				'integer',
+			],
+			'cvv'          => [
+				'required',
+				'numeric',
+				'max: 999',
+			],
+		];
+
+		// устанавливаем данные для валитора
+		Validator::shouldReceive('make')
+			->with($input, $rules, [])
+			->andReturn($this->validator)
+			->once()
+			->ordered();
+
+		// валидация прошла успешно
+		$this->validator->shouldReceive('fails')
+			->andReturn(false)
+			->once()
+			->ordered();
+
+		$valid = $this->cardValidator->doValidate($input);
+
+		$this->assertTrue($valid);
+	}
+
+
+} 
