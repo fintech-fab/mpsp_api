@@ -109,7 +109,9 @@ return [
 
 		// app specific
 		\FintechFab\MPSP\Queue\Support\QueueServiceProvider::class,
-		\FintechFab\MPSP\Validator\ValidatorServiceProvider::class,
+		\FintechFab\MPSP\Validator\Support\ValidatorServiceProvider::class,
+		\FintechFab\MPSP\Commands\Support\CommandsServiceProvider::class,
+		\FintechFab\MPSP\Routes\RoutesServiceProvider::class,
 
 	],
 
