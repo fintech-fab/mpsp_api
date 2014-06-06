@@ -1,5 +1,6 @@
 <?php namespace FintechFab\MPSP\Calculator;
 
+use Carbon\Carbon;
 use DB;
 use FintechFab\MPSP\Entities\Currency;
 use FintechFab\MPSP\Exceptions\CalculatorException;
@@ -14,9 +15,10 @@ class Calculator
 	private $cityId = null;
 	private $currency = null;
 
-	public function __construct(Currency $transferCurrency)
+	public function __construct(Currency $transferCurrency, Carbon $carbon)
 	{
 		$this->transferCurrency = $transferCurrency;
+		$this->carbon = $carbon;
 	}
 
 	/**
@@ -75,12 +77,12 @@ class Calculator
 			$transferCostId = DB::table('transfer_costs')
 				->insertGetId([
 					'flag_query' => 0,
-					'city_id' => $this->cityId,
+					'city_id'    => $this->cityId,
 					'currency'   => $currency,
 					'sum_from'   => $this->amount,
 					'sum_to'     => $this->amount,
-					'created_at' => date('Y-m-d H:i:s'),
-					'updated_at' => 0,
+					'created_at' => $this->carbon->now()->toDateTimeString(),
+					'updated_at' => $this->carbon->subDays(2)->toDateTimeString(),
 				]);
 
 			$transferCosts = Db::table('transfer_costs')->find($transferCostId);
@@ -96,6 +98,13 @@ class Calculator
 			Queue::connection('gateway')->push('calculateFee', [
 				'cost_id'  => $transferCosts->id,
 				'city_id' => $this->cityId,
+				'amount'   => $this->amount,
+				'currency' => $this->currency,
+			]);
+
+			\Log::info('calculateFeeData', [
+				'cost_id'  => $transferCosts->id,
+				'city_id'  => $this->cityId,
 				'amount'   => $this->amount,
 				'currency' => $this->currency,
 			]);

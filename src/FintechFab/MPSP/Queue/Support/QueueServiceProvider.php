@@ -1,19 +1,21 @@
 <?php namespace FintechFab\MPSP\Queue\Support;
 
-use Illuminate\Support\ServiceProvider;
 use FintechFab\MPSP\Queue\Jobs\AcquiringRefundResultJob;
 use FintechFab\MPSP\Queue\Jobs\AcquiringResultJob;
 use FintechFab\MPSP\Queue\Jobs\CalculateFeeResultJob;
 use FintechFab\MPSP\Queue\Jobs\CardCleanJob;
+use FintechFab\MPSP\Queue\Jobs\CitiesListResultJob;
 use FintechFab\MPSP\Queue\Jobs\TransferCancelResultJob;
 use FintechFab\MPSP\Queue\Jobs\TransferCheckResultJob;
 use FintechFab\MPSP\Queue\Jobs\TransferSendResultJob;
 use FintechFab\MPSP\Queue\Jobs\TransferStatusResultJob;
+use Illuminate\Support\ServiceProvider;
 
 class QueueServiceProvider extends ServiceProvider
 {
 
 	const C_CALCULATE_FEE_RESULT = 'calculateFeeResult';
+	const C_CITIES_LIST_RESULT = 'citiesListResult';
 	const C_TRANSFER_CHECK_RESULT = 'transferCheckResult';
 	const C_TRANSFER_SEND_RESULT = 'transferSendResult';
 	const C_TRANSFER_STATUS_RESULT = 'transferStatusResult';
@@ -24,6 +26,10 @@ class QueueServiceProvider extends ServiceProvider
 
 	public function register()
 	{
+
+		// результат подсчета комиссии
+		$this->app->bind(self::C_CITIES_LIST_RESULT, CitiesListResultJob::class);
+
 		// результат подсчета комиссии
 		$this->app->bind(self::C_CALCULATE_FEE_RESULT, CalculateFeeResultJob::class);
 

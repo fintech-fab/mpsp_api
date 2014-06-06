@@ -1,7 +1,7 @@
 <?php namespace FintechFab\MPSP\Controllers;
 
 use FintechFab\MPSP\Entities\City;
-use FintechFab\MPSP\Entities\CityName;
+use FintechFab\MPSP\Repositories\CityRepository;
 use Input;
 
 class CityController extends BaseController
@@ -9,19 +9,10 @@ class CityController extends BaseController
 
 	const C_CITY_LIMIT = 10;
 
-	/**
-	 * @var \FintechFab\MPSP\Entities\City
-	 */
-	private $city;
-	/**
-	 * @var \FintechFab\MPSP\Entities\CityName
-	 */
-	private $cityName;
-
-	public function __construct(City $city, CityName $cityName)
+	public function __construct(City $city, CityRepository $cities)
 	{
 		$this->city = $city;
-		$this->cityName = $cityName;
+		$this->cities = $cities;
 	}
 
 	public function search()
@@ -38,33 +29,11 @@ class CityController extends BaseController
 			return $this->createErrorResponseData([], 'Укажите хотя бы три символа');
 		}
 
-		// Поиск городов названия которых начинаются с поисковых слов
-		$cityIds = $this->cityName
-			->where('value', 'like', "$search%")
-			->limit(self::C_CITY_LIMIT)
-			->get(['city_id']);
-
-		// Если ничего не найдено пробуем искать по всему названию
-		if (count($cityIds) === 0) {
-			$cityIds = $this->cityName
-				->where('value', 'like', "%$search%")
-				->limit(self::C_CITY_LIMIT)
-				->get(['city_id']);
-		}
+		$cities = $this->cities->findByName($search, self::C_CITY_LIMIT);
 
 		$this->setResponseCode(self::C_CODE_SUCCESS);
 
-		$cityIds = $cityIds->lists('city_id');
-
-		$cities = [];
-		if (count($cityIds) > 0) {
-			$cities = $this->city->whereIn('id', $cityIds)
-				->with('names')
-				->get()
-				->toArray();
-		}
-
-		return $this->createSuccessResponseData($cities);
+		return $this->createSuccessResponseData($cities->toArray());
 	}
 
 } 

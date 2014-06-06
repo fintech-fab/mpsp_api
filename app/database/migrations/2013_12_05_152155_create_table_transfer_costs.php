@@ -20,7 +20,7 @@ class CreateTableTransferCosts extends Migration
 			$table->tinyInteger('currency')->unsigned();
 			$table->decimal('sum_from')->unsigned();
 			$table->decimal('sum_to')->unsigned();
-			$table->decimal('amount')->unsigned();
+			$table->decimal('amount')->unsigned()->default(0);
 
 			$table->tinyInteger('flag_query')->unsigned();
 
