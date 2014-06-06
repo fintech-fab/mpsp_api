@@ -43,8 +43,8 @@ class Transfer extends Eloquent
 		'3ds_url',
 		'3ds_post_data',
 		'status',
-		'dt_update',
-		'dt_add',
+		'updated_at',
+		'created_at',
 	];
 
 	/**

@@ -30,7 +30,7 @@ class CalculateFeeResultJob
 				'sum_from'   => $data['amount'],
 				'sum_to'     => $data['amount'],
 				'amount'     => $data['commission'],
-				'dt_update'  => date('Y-m-d H:i:s'),
+				'updated_at'  => date('Y-m-d H:i:s'),
 			));
 
 		$job->delete();

@@ -18,8 +18,8 @@ class Member extends Eloquent
 	protected $visible = [
 		'id',
 		'phone',
-		'dt_update',
-		'dt_add',
+		'updated_at',
+		'created_at',
 	];
 
 	protected $fillable = [
