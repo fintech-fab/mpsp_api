@@ -1,8 +1,8 @@
 <?php namespace FintechFab\MPSP\Queue\Jobs;
 
 use DB;
-use Illuminate\Queue\Jobs\Job;
 use FintechFab\MPSP\Entities\Currency;
+use Illuminate\Queue\Jobs\Job;
 
 class CalculateFeeResultJob
 {
@@ -30,7 +30,7 @@ class CalculateFeeResultJob
 				'sum_from'   => $data['amount'],
 				'sum_to'     => $data['amount'],
 				'amount'     => $data['commission'],
-				'updated_at'  => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
 			));
 
 		$job->delete();

@@ -79,8 +79,8 @@ class Calculator
 					'currency'   => $currency,
 					'sum_from'   => $this->amount,
 					'sum_to'     => $this->amount,
-					'created_at'     => date('Y-m-d H:i:s'),
-					'updated_at'  => 0,
+					'created_at' => date('Y-m-d H:i:s'),
+					'updated_at' => 0,
 				]);
 
 			$transferCosts = Db::table('transfer_costs')->find($transferCostId);
