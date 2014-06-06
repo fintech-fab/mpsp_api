@@ -1,14 +1,15 @@
 <?php namespace FintechFab\MPSP\Tests;
 
-use Mockery as m;
 use FintechFab\MPSP\Calculator\Calculator;
 use FintechFab\MPSP\Entities\City;
+use FintechFab\MPSP\Entities\Sender;
 use FintechFab\MPSP\Services\Code;
 use FintechFab\MPSP\Services\TransferFactory;
 use FintechFab\MPSP\Validator\CardValidator;
 use FintechFab\MPSP\Validator\ReceiverValidator;
 use FintechFab\MPSP\Validator\SenderValidator;
 use FintechFab\MPSP\Validator\TransferValidator;
+use Mockery as m;
 use Queue;
 
 /**
@@ -49,9 +50,7 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 	/**
 	 * @param $class_name
 	 *
-	 * @return \Mockery\MockInterface|\Mockery\Expectation|\FintechFab\MPSP\Entities\Transfer|TransferFactory|TransferValidator|\FintechFab\MPSP\Entities\Card|Calculator|\FintechFab\MPSP\Entities\Currency|\Illuminate\Validation\Validator|\Carbon\Carbon|\FintechFab\MPSP\Repositories\TransferRepository|\FintechFab\MPSP\Entities\Receiver|\FintechFab\MPSP\Services\TransferStatusSwitcher|\FintechFab\MPSP\Entities\Member|ReceiverValidator|CardValidator|SenderValidator|Code|City
-	 *
-	 *
+	 * @return \Mockery\MockInterface|\Mockery\Expectation|\FintechFab\MPSP\Entities\Transfer|TransferFactory|TransferValidator|\FintechFab\MPSP\Entities\Card|Calculator|\FintechFab\MPSP\Entities\Currency|\Illuminate\Validation\Validator|\Carbon\Carbon|\FintechFab\MPSP\Repositories\TransferRepository|\FintechFab\MPSP\Entities\Receiver|\FintechFab\MPSP\Services\TransferStatusSwitcher|\FintechFab\MPSP\Entities\Member|ReceiverValidator|CardValidator|SenderValidator|Code|City|Sender
 	 */
 	protected function mock($class_name)
 	{

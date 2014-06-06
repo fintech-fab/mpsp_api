@@ -1,5 +1,6 @@
 <?php namespace FintechFab\MPSP\Tests\Calculator;
 
+use Carbon\Carbon;
 use DB;
 use FintechFab\MPSP\Calculator\Calculator;
 use FintechFab\MPSP\Entities\Currency;
@@ -18,6 +19,7 @@ use Validator;
  * @property \Mockery\MockInterface                              $queryBuilder
  * @property \Mockery\MockInterface                              $queue
  * @property \FintechFab\MPSP\Calculator\Calculator              $calculator
+ * @property mixed                                               carbon
  */
 class TransferCostCalculatorTest extends TestCase
 {
@@ -30,8 +32,9 @@ class TransferCostCalculatorTest extends TestCase
 		$this->transferCurrency = $this->mock(Currency::class);
 		$this->validator = $this->mock(Validation::class);
 		$this->queryBuilder = $this->mock(Builder::class);
+		$this->carbon = $this->mock(Carbon::class);
 
-		$this->calculator = new Calculator($this->transferCurrency);
+		$this->calculator = new Calculator($this->transferCurrency, $this->carbon);
 	}
 
 	/**
@@ -210,6 +213,16 @@ class TransferCostCalculatorTest extends TestCase
 
 		$this->queryBuilder->shouldReceive('orderBy')
 			->andReturn($this->queryBuilder);
+
+		$this->carbon->shouldReceive('now')
+			->andReturn($this->carbon);
+
+		$this->carbon->shouldReceive('toDateTimeString')
+			->andReturn(time());
+
+		$this->carbon->shouldReceive('subDays')
+			->with(2)
+			->andReturn($this->carbon);
 
 		$this->queryBuilder->shouldReceive('insertGetId')
 			->andReturn($transferCostId);
