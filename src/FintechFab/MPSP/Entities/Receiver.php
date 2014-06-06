@@ -1,10 +1,9 @@
 <?php namespace FintechFab\MPSP\Entities;
 
 use ArrayAccess;
+use FintechFab\MPSP\Repositories\CityRepository;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Support\Contracts\JsonableInterface;
-use FintechFab\MPSP\Entities\Transfer;
-use FintechFab\MPSP\Repositories\CityRepository;
 
 /**
  * @property string $surname
@@ -86,7 +85,7 @@ class Receiver implements ArrayAccess, ArrayableInterface, JsonableInterface
 		$this->name = $transfer->receiver_name;
 		$this->surname = $transfer->receiver_surname;
 		$this->thirdname = $transfer->receiver_thirdname;
-		$this->city = $this->cities->findById($transfer->receiver_city)->getRussianName();
+		$this->city = $transfer->receiver_city;
 
 		if ($transfer->receiver) {
 			$this->phone = $transfer->receiver->phone;

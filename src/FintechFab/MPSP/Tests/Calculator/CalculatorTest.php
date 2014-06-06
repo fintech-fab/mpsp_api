@@ -1,22 +1,22 @@
 <?php namespace FintechFab\MPSP\Tests\Calculator;
 
 use DB;
-use FintechFab\MPSP\Tests\TestCase;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Queue\QueueInterface;
-use Illuminate\Validation\Validator as Validation;
 use FintechFab\MPSP\Calculator\Calculator;
 use FintechFab\MPSP\Entities\Currency;
 use FintechFab\MPSP\Exceptions\CalculatorException;
 use FintechFab\MPSP\Exceptions\ValidatorException;
+use FintechFab\MPSP\Tests\TestCase;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Queue\QueueInterface;
+use Illuminate\Validation\Validator as Validation;
 use Queue;
 use Validator;
 
 /**
- * @property \Mockery\MockInterface                   $transferCurrency
- * @property \Mockery\MockInterface                   $validator
- * @property \Mockery\MockInterface                   $queryBuilder
- * @property \Mockery\MockInterface                   $queue
+ * @property \Mockery\MockInterface                              $transferCurrency
+ * @property \Mockery\MockInterface                              $validator
+ * @property \Mockery\MockInterface                              $queryBuilder
+ * @property \Mockery\MockInterface                              $queue
  * @property \FintechFab\MPSP\Calculator\Calculator              $calculator
  */
 class TransferCostCalculatorTest extends TestCase
@@ -42,10 +42,15 @@ class TransferCostCalculatorTest extends TestCase
 		$data = [
 			'amount'   => 105,
 			'currency' => 'RUR',
+			'city_id' => 1,
 		];
 
 		// правила валидации
 		$rules = [
+			'city_id' => [
+				'required',
+				'numeric',
+			],
 			'amount'   => [
 				'required',
 				'numeric',
@@ -89,6 +94,12 @@ class TransferCostCalculatorTest extends TestCase
 			->with('transfer_costs')
 			->andReturn($this->queryBuilder)
 			->twice();
+
+		$this->queryBuilder->shouldReceive('where')
+			->with('city_id', 1)
+			->andReturn($this->queryBuilder)
+			->once()
+			->ordered();
 
 		$this->queryBuilder->shouldReceive('where')
 			->with('currency', 1)
@@ -146,6 +157,7 @@ class TransferCostCalculatorTest extends TestCase
 			->withArgs(array(
 				'calculateFee',
 				array(
+					'city_id' => 1,
 					'cost_id'  => $transferCostId,
 					'amount'   => 105,
 					'currency' => 'RUR',
@@ -156,6 +168,7 @@ class TransferCostCalculatorTest extends TestCase
 
 		$this->calculator->setAmount($data['amount']);
 		$this->calculator->setCurrency($data['currency']);
+		$this->calculator->setCityId($data['city_id']);
 		$result = $this->calculator->doCalculate();
 
 		$this->assertEquals(7.03, $result);

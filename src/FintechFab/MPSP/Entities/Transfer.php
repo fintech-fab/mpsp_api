@@ -1,10 +1,8 @@
 <?php namespace FintechFab\MPSP\Entities;
 
 use Eloquent;
-use FintechFab\MPSP\Entities\Card;
-use FintechFab\MPSP\Entities\Member;
-use Log;
 use FintechFab\MPSP\Constants\MemberType;
+use Log;
 
 /**
  * An Eloquent Model: '\Monemobo\Transfer\Transfer'
@@ -28,7 +26,7 @@ use FintechFab\MPSP\Constants\MemberType;
  * @property \Carbon\Carbon   $created_at
  * @property-read Member|null $sender
  * @property-read Member|null $receiver
- * @property Card     $card
+ * @property Card             $card
  *
  * @method static Transfer find($id, $columns = array('*'))
  */
@@ -41,6 +39,7 @@ class Transfer extends Eloquent
 		'amount',
 		'fee',
 		'currency',
+		'checknumber',
 		'3ds_url',
 		'3ds_post_data',
 		'status',

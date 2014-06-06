@@ -1,7 +1,8 @@
 <?php namespace FintechFab\MPSP\Services;
 
-use FintechFab\MPSP\Entities\Transfer;
 use FintechFab\MPSP\Entities\Receiver;
+use FintechFab\MPSP\Entities\Sender;
+use FintechFab\MPSP\Entities\Transfer;
 use Queue;
 
 class TransferStatusSwitcher
@@ -57,10 +58,19 @@ class TransferStatusSwitcher
 	 * Значение указывается в секундах
 	 */
 	const C_CLEAN_CARD_DELAY = 3600;
+	/**
+	 * @var \FintechFab\MPSP\Entities\Sender
+	 */
+	private $sender;
 
-	public function __construct(Receiver $transferReceiver)
+	/**
+	 * @param Sender   $sender
+	 * @param Receiver $receiver
+	 */
+	public function __construct(Sender $sender, Receiver $receiver)
 	{
-		$this->transferReceiver = $transferReceiver;
+		$this->sender = $sender;
+		$this->transferReceiver = $receiver;
 	}
 
 	/**
@@ -85,6 +95,7 @@ class TransferStatusSwitcher
 		Queue::connection('gateway')
 			->push('transferCheck', array(
 				'transfer' => $transfer->toArray(),
+				'sender' => $this->sender->loadFromTransfer($transfer)->toArray(),
 				'receiver' => $this->transferReceiver->loadFromTransfer($transfer)->toArray(),
 			));
 	}
@@ -103,6 +114,7 @@ class TransferStatusSwitcher
 
 			'transfer'    => $transfer->toArray(),
 			'receiver'    => $this->transferReceiver->loadFromTransfer($transfer)->toArray(),
+			'sender' => $this->sender->loadFromTransfer($transfer)->toArray(),
 		];
 
 		// ставим задачу на снятие средств
@@ -111,15 +123,18 @@ class TransferStatusSwitcher
 	}
 
 	/**
-	 * Эквайринг пройден, система выполнила перевол
+	 * Эквайринг пройден, система выполнила перевод
 	 */
-	public function doSendSuccess(Transfer $transfer)
+	public function doSendSuccess(Transfer $transfer, $checkNumber)
 	{
 		$transfer->setStatus(self::C_STATUS_TRANSFER_SUCCESS);
+		$transfer->checknumber = $checkNumber;
+		$transfer->save();
 
 		$requestData = [
-			'id'          => $transfer->id,
-			'checknumber' => $transfer->checknumber,
+			'transfer' => $transfer->toArray(),
+			'receiver' => $transfer->receiver->toArray(),
+			'sender'   => $transfer->sender->toArray(),
 		];
 
 		Queue::connection('gateway')
@@ -165,8 +180,8 @@ class TransferStatusSwitcher
 	 * Требуется 3DS авторизация
 	 *
 	 * @param \FintechFab\MPSP\Entities\Transfer $transfer
-	 * @param string                  $url
-	 * @param array                   $data
+	 * @param string                             $url
+	 * @param array                              $data
 	 */
 	public function do3DS(Transfer $transfer, $url, array $data)
 	{
@@ -182,12 +197,9 @@ class TransferStatusSwitcher
 	 * Перевод возможно осуществить
 	 *
 	 * @param \FintechFab\MPSP\Entities\Transfer $transfer
-	 * @param string                  $checkNumber
 	 */
-	public function doCheckSuccess(Transfer $transfer, $checkNumber)
+	public function doCheckSuccess(Transfer $transfer)
 	{
-		$transfer->checknumber = $checkNumber;
-
 		// меняем статус
 		$transfer->setStatus(self::C_STATUS_CHECK_SUCCESS);
 

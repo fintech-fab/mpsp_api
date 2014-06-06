@@ -65,4 +65,11 @@ class Sender implements ArrayAccess, ArrayableInterface, JsonableInterface
 		return $this->attributes;
 	}
 
+	public function loadFromTransfer(Transfer $transfer)
+	{
+		$this->phone = $transfer->sender->phone;
+
+		return $this;
+	}
+
 }

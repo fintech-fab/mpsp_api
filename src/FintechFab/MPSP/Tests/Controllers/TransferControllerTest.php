@@ -2,14 +2,13 @@
 
 use Exception;
 use FintechFab\MPSP\Calculator\Calculator;
+use FintechFab\MPSP\Entities\Card;
 use FintechFab\MPSP\Entities\City;
 use FintechFab\MPSP\Entities\Member;
-use FintechFab\MPSP\Entities\Transfer;
-use FintechFab\MPSP\Entities\Card;
 use FintechFab\MPSP\Entities\Receiver;
 use FintechFab\MPSP\Entities\Sender;
+use FintechFab\MPSP\Entities\Transfer;
 use FintechFab\MPSP\Exceptions\ValidatorException;
-use FintechFab\MPSP\Repositories\CityRepository;
 use FintechFab\MPSP\Services\TransferFactory;
 use FintechFab\MPSP\Sms\Sms;
 use FintechFab\MPSP\Tests\TestCase;
@@ -23,7 +22,6 @@ use Queue;
  * @property \Mockery\MockInterface                                                                                      $transferFactory
  * @property \Mockery\MockInterface                                                                                      $receiver
  * @property \Mockery\MockInterface                                                                                      $sender
- * @property \Mockery\MockInterface                                                                                      $cities
  * @property \Mockery\MockInterface                                                                                      $city
  */
 class TransferControllerTest extends TestCase
@@ -41,7 +39,6 @@ class TransferControllerTest extends TestCase
 		$this->sender = $this->mock(Sender::class);
 		$this->transferFactory = $this->mock(TransferFactory::class);
 		$this->transferCostCalculator = $this->mock(Calculator::class);
-		$this->cities = $this->mock(CityRepository::class);
 		$this->city = $this->mock(City::class);
 	}
 
@@ -62,6 +59,11 @@ class TransferControllerTest extends TestCase
 			->once()
 			->ordered();
 
+		$this->transferCostCalculator->shouldReceive('setCityId')
+			->with(5)
+			->once()
+			->ordered();
+
 		$this->transferCostCalculator->shouldReceive('doCalculate')
 			->andReturn(30.5)
 			->once()
@@ -70,6 +72,7 @@ class TransferControllerTest extends TestCase
 		$this->call('POST', 'transfer/cost', [
 			'amount'   => 100,
 			'currency' => 'RUR',
+			'city_id' => 5,
 		]);
 	}
 
@@ -82,6 +85,7 @@ class TransferControllerTest extends TestCase
 	{
 		$this->transferCostCalculator->shouldReceive('setAmount');
 		$this->transferCostCalculator->shouldReceive('setCurrency');
+		$this->transferCostCalculator->shouldReceive('setCityId');
 
 		$this->transferCostCalculator->shouldReceive('doCalculate')
 			->andThrow(ValidatorException::class)
@@ -109,6 +113,7 @@ class TransferControllerTest extends TestCase
 	{
 		$this->transferCostCalculator->shouldReceive('setAmount');
 		$this->transferCostCalculator->shouldReceive('setCurrency');
+		$this->transferCostCalculator->shouldReceive('setCityId');
 
 		$this->transferCostCalculator->shouldReceive('doCalculate')
 			->andThrow(Exception::class)
@@ -163,12 +168,6 @@ class TransferControllerTest extends TestCase
 		];
 
 		$post = array_merge($transferAttributes, $transferCardAttributes, $transferReceiverAttributes);
-
-		// ищем город
-		$this->cities->shouldReceive('findById')
-			->with($transferReceiverAttributes['receiver_city_id'])
-			->andReturn($this->city)
-			->once();
 
 		// задаем данные для карты
 		$this->transferCard->shouldReceive('setAttribute')
@@ -321,7 +320,6 @@ class TransferControllerTest extends TestCase
 
 		$post = array_merge($transferAttributes, $transferCardAttributes);
 
-		$this->cities->shouldReceive('findById');
 		$this->transferCard->shouldReceive('setAttribute');
 		$this->receiver->shouldReceive('offsetSet');
 		$this->sender->shouldReceive('offsetSet');

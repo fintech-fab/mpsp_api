@@ -1,8 +1,8 @@
 <?php namespace FintechFab\MPSP\Queue\Jobs;
 
-use Log;
 use FintechFab\MPSP\Repositories\TransferRepository;
 use FintechFab\MPSP\Services\TransferStatusSwitcher;
+use Log;
 
 class TransferSendResultJob extends AbstractJob
 {
@@ -16,6 +16,7 @@ class TransferSendResultJob extends AbstractJob
 	protected function run($data)
 	{
 		$transferId = $data['transfer_id'];
+		$checkNumber = $data['checknumber'];
 
 		$transfer = $this->transfers->findById($transferId);
 
@@ -36,7 +37,7 @@ class TransferSendResultJob extends AbstractJob
 			} else {
 
 				Log::info('Операция по переводу денежных средств выполнена. Ожидаем подтверждение статуса', $transfer->toArray());
-				$this->transferStatusSwitcher->doSendSuccess($transfer);
+				$this->transferStatusSwitcher->doSendSuccess($transfer, $checkNumber);
 
 			}
 

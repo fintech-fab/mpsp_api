@@ -11,6 +11,7 @@ class Calculator
 {
 
 	private $amount = null;
+	private $cityId = null;
 	private $currency = null;
 
 	public function __construct(Currency $transferCurrency)
@@ -39,6 +40,16 @@ class Calculator
 	}
 
 	/**
+	 * Задать город
+	 *
+	 * @param $cityId
+	 */
+	public function setCityId($cityId)
+	{
+		$this->cityId = $cityId;
+	}
+
+	/**
 	 * Высчитать комиссию
 	 *
 	 * @throws \FintechFab\MPSP\Exceptions\ValidatorException
@@ -52,6 +63,7 @@ class Calculator
 
 		// выбираем стоимость перевода из базы
 		$transferCosts = DB::table('transfer_costs')
+			->where('city_id', $this->cityId)
 			->where('currency', $currency)
 			->where('sum_from', '<=', $this->amount)
 			->where('sum_to', '>=', $this->amount)
@@ -63,6 +75,7 @@ class Calculator
 			$transferCostId = DB::table('transfer_costs')
 				->insertGetId([
 					'flag_query' => 0,
+					'city_id' => $this->cityId,
 					'currency'   => $currency,
 					'sum_from'   => $this->amount,
 					'sum_to'     => $this->amount,
@@ -82,6 +95,7 @@ class Calculator
 			// кидаем задание в очередь на подсчет комиссии
 			Queue::connection('gateway')->push('calculateFee', [
 				'cost_id'  => $transferCosts->id,
+				'city_id' => $this->cityId,
 				'amount'   => $this->amount,
 				'currency' => $this->currency,
 			]);
@@ -132,6 +146,10 @@ class Calculator
 
 		// правила валидации
 		$rules = [
+			'city_id' => [
+				'required',
+				'numeric',
+			],
 			'amount'   => [
 				'required',
 				'numeric',
@@ -146,6 +164,7 @@ class Calculator
 
 		// данные для валидации
 		$data = [
+			'city_id' => $this->cityId,
 			'amount'   => $this->amount,
 			'currency' => $this->currency,
 		];

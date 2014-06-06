@@ -7,7 +7,6 @@ use FintechFab\MPSP\Entities\Receiver;
 use FintechFab\MPSP\Entities\Sender;
 use FintechFab\MPSP\Exceptions\CalculatorException;
 use FintechFab\MPSP\Exceptions\ValidatorException;
-use FintechFab\MPSP\Repositories\CityRepository;
 use FintechFab\MPSP\Repositories\TransferRepository;
 use FintechFab\MPSP\Services\TransferFactory;
 use FintechFab\MPSP\Services\TransferStatusSwitcher;
@@ -36,7 +35,6 @@ class TransferController extends BaseController
 		Sender $sender,
 		TransferRepository $transfers,
 		TransferStatusSwitcher $transferStatusSwitcher,
-		CityRepository $cities,
 		Sms $sms
 	)
 	{
@@ -47,7 +45,6 @@ class TransferController extends BaseController
 		$this->sender = $sender;
 		$this->transfers = $transfers;
 		$this->transferStatusSwitcher = $transferStatusSwitcher;
-		$this->cities = $cities;
 		$this->sms = $sms;
 	}
 
@@ -60,9 +57,11 @@ class TransferController extends BaseController
 	{
 		$amount = Input::get('amount');
 		$currency = Input::get('currency');
+		$cityId = Input::get('city_id');
 
 		$this->transferCostCalculator->setAmount($amount);
 		$this->transferCostCalculator->setCurrency($currency);
+		$this->transferCostCalculator->setCityId($cityId);
 
 		$cost = null;
 
@@ -126,9 +125,6 @@ class TransferController extends BaseController
 		$receiverCityId = Input::get('receiver_city_id');
 		$receiverPhone = Input::get('receiver_phone');
 
-		// ищем город по id
-		$city = $this->cities->findById($receiverCityId);
-
 		// задаем данные для объекта банк. карты
 		$this->transferCard->number = $cardNumber;
 		$this->transferCard->expire_month = $cardExpireMonth;
@@ -142,7 +138,7 @@ class TransferController extends BaseController
 		$this->receiver->surname = $receiverSurname;
 		$this->receiver->name = $receiverName;
 		$this->receiver->thirdname = $receiverThirdname;
-		$this->receiver->city = !is_null($city) ? $city->id : null;
+		$this->receiver->city = $receiverCityId;
 		$this->receiver->phone = $receiverPhone;
 
 		// задаем данные для трансфера

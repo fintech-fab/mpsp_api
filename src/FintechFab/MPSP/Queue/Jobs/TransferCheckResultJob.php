@@ -1,8 +1,8 @@
 <?php namespace FintechFab\MPSP\Queue\Jobs;
 
-use Log;
 use FintechFab\MPSP\Repositories\TransferRepository;
 use FintechFab\MPSP\Services\TransferStatusSwitcher;
+use Log;
 
 class TransferCheckResultJob extends AbstractJob
 {
@@ -28,7 +28,7 @@ class TransferCheckResultJob extends AbstractJob
 			return;
 		}
 
-		$failed = isset($data['error']) || !isset($data['checknumber']);
+		$failed = isset($data['error']);
 
 		if ($failed) {
 
@@ -38,7 +38,7 @@ class TransferCheckResultJob extends AbstractJob
 		} else {
 
 			Log::info('Отправляем задачу на снятие средств', $transfer->toArray());
-			$this->transferStatusSwitcher->doCheckSuccess($transfer, $data['checknumber']);
+			$this->transferStatusSwitcher->doCheckSuccess($transfer);
 
 		}
 

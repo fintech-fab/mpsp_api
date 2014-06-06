@@ -16,6 +16,7 @@ class CreateTableTransferCosts extends Migration
 		Schema::create('transfer_costs', function (Blueprint $table) {
 			$table->increments('id');
 
+			$table->integer('city_id')->unsigned();
 			$table->tinyInteger('currency')->unsigned();
 			$table->decimal('sum_from')->unsigned();
 			$table->decimal('sum_to')->unsigned();
