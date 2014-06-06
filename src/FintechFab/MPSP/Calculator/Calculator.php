@@ -55,7 +55,7 @@ class Calculator
 			->where('currency', $currency)
 			->where('sum_from', '<=', $this->amount)
 			->where('sum_to', '>=', $this->amount)
-			->orderBy('dt_update', 'desc')
+			->orderBy('updated_at', 'desc')
 			->first();
 
 		if (is_null($transferCosts)) {
@@ -66,15 +66,15 @@ class Calculator
 					'currency'   => $currency,
 					'sum_from'   => $this->amount,
 					'sum_to'     => $this->amount,
-					'dt_add'     => date('Y-m-d H:i:s'),
-					'dt_update'  => 0,
+					'created_at'     => date('Y-m-d H:i:s'),
+					'updated_at'  => 0,
 				]);
 
 			$transferCosts = Db::table('transfer_costs')->find($transferCostId);
 		}
 
 		// Если обновление не запущено и информация устарела
-		if ($transferCosts->flag_query == 0 && $transferCosts->dt_update < date('Y-m-d H:i:s', time() - 86400)) {
+		if ($transferCosts->flag_query == 0 && $transferCosts->updated_at < date('Y-m-d H:i:s', time() - 86400)) {
 
 			// Запись в обработке
 			Db::table('transfer_costs')->where('id', '=', $transferCosts->id)->update(['flag_query' => 1]);

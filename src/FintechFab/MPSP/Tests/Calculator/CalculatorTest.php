@@ -13,11 +13,11 @@ use Queue;
 use Validator;
 
 /**
- * @property \Mockery\MockInterface                   $transferCurrency
- * @property \Mockery\MockInterface                   $validator
- * @property \Mockery\MockInterface                   $queryBuilder
- * @property \Mockery\MockInterface                   $queue
- * @property \FintechFab\MPSP\Calculator\Calculator              $calculator
+ * @property \Mockery\MockInterface                  $transferCurrency
+ * @property \Mockery\MockInterface                  $validator
+ * @property \Mockery\MockInterface                  $queryBuilder
+ * @property \Mockery\MockInterface                  $queue
+ * @property \FintechFab\MPSP\Calculator\Calculator  $calculator
  */
 class TransferCostCalculatorTest extends TestCase
 {
@@ -114,7 +114,7 @@ class TransferCostCalculatorTest extends TestCase
 			'id'         => $transferCostId,
 			'amount'     => 7.03,
 			'flag_query' => 0,
-			'dt_update'  => date('Y-m-d H:i:s', time() - 365 * 86400), // Информация о комиссии есть, но она просрочена
+			'updated_at' => date('Y-m-d H:i:s', time() - 365 * 86400), // Информация о комиссии есть, но она просрочена
 		];
 
 		$this->queryBuilder->shouldReceive('first')
