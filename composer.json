@@ -29,7 +29,6 @@
 		"iron-io/iron_mq": "dev-master",
 
 		"phpunit/phpunit": "4.2.*@dev",
-		"phpunit/php-code-coverage": "3.0.*@dev",
 		"mockery/mockery": "dev-master"
 	},
 	"autoload": {
