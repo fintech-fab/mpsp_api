@@ -69,7 +69,7 @@ class TransferController extends BaseController
 			$cost = $this->transferCostCalculator->doCalculate();
 		} catch (ValidatorException $exception) {
 
-			// ошибка валидации
+			Log::info($exception->getMessage());
 			$this->setResponseCode(self::C_CODE_VALIDATION_ERROR);
 
 			return $this->createErrorResponseData([
