@@ -32,12 +32,24 @@ class AcquiringResultJobTest extends TestCase
 
 	public function testSuccess()
 	{
+		$irn = 'dsakldsada';
+		$rrn = 'dszlkdjkpd1';
 		$transferId = 11;
 
 		$this->transfers->shouldReceive('findById')
 			->withArgs([$transferId])
 			->andReturn($this->transfer)
 			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('irn', $irn)
+			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('rrn', $rrn)
+			->once();
+
+		$this->transfer->shouldReceive('save')->once();
 
 		$this->transferStatusSwitcher->shouldReceive('doToSend')
 			->withArgs([$this->transfer])
@@ -48,17 +60,31 @@ class AcquiringResultJobTest extends TestCase
 		$this->acquiringResultJob->fire($this->job, [
 			'transfer_id' => $transferId,
 			'need_3ds'    => false,
+			'irn'         => $irn,
+			'rrn'         => $rrn,
 		]);
 	}
 
 	public function testError()
 	{
+		$irn = 'dsakldsada';
+		$rrn = 'dszlkdjkpd1';
 		$transferId = 11;
 
 		$this->transfers->shouldReceive('findById')
 			->withArgs([$transferId])
 			->andReturn($this->transfer)
 			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('irn', $irn)
+			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('rrn', $rrn)
+			->once();
+
+		$this->transfer->shouldReceive('save')->once();
 
 		$this->transferStatusSwitcher->shouldReceive('doAcquiringError')
 			->withArgs([$this->transfer])
@@ -70,17 +96,31 @@ class AcquiringResultJobTest extends TestCase
 			'transfer_id' => $transferId,
 			'need_3ds'    => false,
 			'error'       => 'error_data',
+			'irn'         => $irn,
+			'rrn'         => $rrn,
 		]);
 	}
 
 	public function test3DS()
 	{
+		$irn = 'dsakldsada';
+		$rrn = 'dszlkdjkpd1';
 		$transferId = 11;
 
 		$this->transfers->shouldReceive('findById')
 			->withArgs([$transferId])
 			->andReturn($this->transfer)
 			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('irn', $irn)
+			->once();
+
+		$this->transfer->shouldReceive('setAttribute')
+			->with('rrn', $rrn)
+			->once();
+
+		$this->transfer->shouldReceive('save')->once();
 
 		$this->transferStatusSwitcher->shouldReceive('do3DS')
 			->withArgs([$this->transfer, 'some_url', ['post']])
@@ -93,6 +133,8 @@ class AcquiringResultJobTest extends TestCase
 			'need_3ds'      => true,
 			'3ds_url'       => 'some_url',
 			'3ds_post_data' => ['post'],
+			'irn'           => $irn,
+			'rrn'           => $rrn,
 		]);
 	}
 

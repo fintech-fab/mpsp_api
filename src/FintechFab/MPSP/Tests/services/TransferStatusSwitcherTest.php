@@ -1,5 +1,6 @@
 <?php namespace FintechFab\MPSP\Tests\Services;
 
+use FintechFab\MPSP\Entities\Sender;
 use FintechFab\MPSP\Tests\TestCase;
 use Illuminate\Queue\QueueInterface;
 use Mockery;
@@ -14,12 +15,13 @@ use FintechFab\MPSP\Services\TransferStatusSwitcher;
 use Queue;
 
 /**
- * @property \Mockery\MockInterface|mixed                 $transfer
- * @property MockInterface                                $city
- * @property MockInterface                                $cities
- * @property MockInterface                                transferReceiver
- * @property TransferStatusSwitcher                       $transferStatusSwitcher
- * @property MockInterface                                $queue
+ * @property \Mockery\MockInterface|mixed                         $transfer
+ * @property MockInterface                                        $city
+ * @property MockInterface                                        $cities
+ * @property MockInterface                                        $transferSender
+ * @property MockInterface                                        transferReceiver
+ * @property TransferStatusSwitcher                               $transferStatusSwitcher
+ * @property MockInterface                                        $queue
  */
 class TransferStatusSwitchTest extends TestCase
 {
@@ -33,8 +35,9 @@ class TransferStatusSwitchTest extends TestCase
 		$this->city = $this->mock(City::class);
 		$this->cities = $this->mock(CityRepository::class);
 
+		$this->transferSender = $this->mock(Sender::class);
 		$this->transferReceiver = $this->mock(Receiver::class);
-		$this->transferStatusSwitcher = new TransferStatusSwitcher($this->transferReceiver);
+		$this->transferStatusSwitcher = new TransferStatusSwitcher($this->transferSender, $this->transferReceiver);
 
 		$this->queue = $this->mock(QueueInterface::class);
 	}
@@ -94,6 +97,13 @@ class TransferStatusSwitchTest extends TestCase
 			->once();
 
 		$this->transferReceiver->shouldReceive('toArray')->once();
+
+		$this->transferSender->shouldReceive('loadFromTransfer')
+			->with($this->transfer)
+			->andReturn($this->transferSender)
+			->once();
+
+		$this->transferSender->shouldReceive('toArray')->once();
 
 		Queue::shouldReceive('connection')
 			->with('gateway')
@@ -171,11 +181,6 @@ class TransferStatusSwitchTest extends TestCase
 			)
 			->once()
 			->ordered();
-
-		$this->transfer
-			->shouldReceive('setAttribute')
-			->with('checknumber', 'checknumber')
-			->once();
 
 		$transferCard = $this->mock(Card::class);
 

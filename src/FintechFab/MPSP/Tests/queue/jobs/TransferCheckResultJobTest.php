@@ -53,7 +53,7 @@ class TransferCheckResultJobTest extends TestCase
 
 		// устанавливаем статус
 		$this->transferStatusSwitcher->shouldReceive('doCheckSuccess')
-			->with($this->transfer, $checkNumber)
+			->with($this->transfer)
 			->once()
 			->ordered();
 
