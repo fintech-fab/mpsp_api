@@ -5,6 +5,7 @@ use DB;
 use FintechFab\MPSP\Entities\Currency;
 use FintechFab\MPSP\Exceptions\CalculatorException;
 use FintechFab\MPSP\Exceptions\ValidatorException;
+use Log;
 use Queue;
 use Validator;
 
@@ -72,6 +73,15 @@ class Calculator
 			->orderBy('updated_at', 'desc')
 			->first();
 
+		if ($transferCosts) {
+			Log::debug('Found transferCosts', (array)$transferCosts);
+			if ($transferCosts->flag_query == 1 && $transferCosts->amount === '0.00' || $transferCosts->amount <= 0) {
+				Log::debug('Need reply calculator by empty amount');
+				DB::table('users')->where('id', $transferCosts->id)->update(array('flag_query' => 0));
+				$transferCosts->flag_query = 0;
+			}
+		}
+
 		if (is_null($transferCosts)) {
 
 			$transferCostId = DB::table('transfer_costs')
@@ -95,12 +105,14 @@ class Calculator
 			Db::table('transfer_costs')->where('id', '=', $transferCosts->id)->update(['flag_query' => 1]);
 
 			// кидаем задание в очередь на подсчет комиссии
-			Queue::connection('gateway')->push('calculateFee', [
+			$data = [
 				'cost_id'  => $transferCosts->id,
-				'city_id' => $this->cityId,
+				'city_id'  => $this->cityId,
 				'amount'   => $this->amount,
 				'currency' => $this->currency,
-			]);
+			];
+			Log::debug('Push calculateFee', $data);
+			Queue::connection('gateway')->push('calculateFee', $data);
 
 			\Log::info('calculateFeeData', [
 				'cost_id'  => $transferCosts->id,
@@ -155,7 +167,7 @@ class Calculator
 
 		// правила валидации
 		$rules = [
-			'city_id' => [
+			'city_id'  => [
 				'required',
 				'numeric',
 			],
@@ -173,7 +185,7 @@ class Calculator
 
 		// данные для валидации
 		$data = [
-			'city_id' => $this->cityId,
+			'city_id'  => $this->cityId,
 			'amount'   => $this->amount,
 			'currency' => $this->currency,
 		];

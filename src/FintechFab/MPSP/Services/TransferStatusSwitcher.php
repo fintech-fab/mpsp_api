@@ -95,7 +95,7 @@ class TransferStatusSwitcher
 		Queue::connection('gateway')
 			->push('transferCheck', array(
 				'transfer' => $transfer->toArray(),
-				'sender' => $this->sender->loadFromTransfer($transfer)->toArray(),
+				'sender'   => $this->sender->loadFromTransfer($transfer)->toArray(),
 				'receiver' => $this->transferReceiver->loadFromTransfer($transfer)->toArray(),
 			));
 	}
@@ -114,7 +114,7 @@ class TransferStatusSwitcher
 
 			'transfer'    => $transfer->toArray(),
 			'receiver'    => $this->transferReceiver->loadFromTransfer($transfer)->toArray(),
-			'sender' => $this->sender->loadFromTransfer($transfer)->toArray(),
+			'sender'      => $this->sender->loadFromTransfer($transfer)->toArray(),
 		];
 
 		// ставим задачу на снятие средств
@@ -164,7 +164,10 @@ class TransferStatusSwitcher
 		// ставим задачу на возврат средств
 		Queue::connection('gateway')
 			->push('acquiringRefund', [
-				'transfer' => ['id' => $transfer->id]
+				'transfer' => ['id' => $transfer->id],
+				'amount'   => $transfer->getFullAmount(),
+				'rrn'      => $transfer->rrn,
+				'irn'      => $transfer->irn,
 			]);
 	}
 

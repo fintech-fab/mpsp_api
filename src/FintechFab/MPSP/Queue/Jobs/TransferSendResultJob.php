@@ -16,9 +16,16 @@ class TransferSendResultJob extends AbstractJob
 	protected function run($data)
 	{
 		$transferId = $data['transfer_id'];
-		$checkNumber = $data['checknumber'];
 
 		$transfer = $this->transfers->findById($transferId);
+		if(!empty($data['error'])){
+			Log::warning('Error transaction', $data);
+			Log::info('Необходима отмена транзакции', $data);
+			$this->transferStatusSwitcher->doSendError($transfer);
+			return;
+		}
+
+		$checkNumber = $data['checknumber'];
 
 		// трансфера с кодом не существует
 		if (is_null($transfer)) {

@@ -18,6 +18,8 @@ use Log;
  * @property string           $receiver_name
  * @property string           $receiver_thirdname
  * @property string           $receiver_city
+ * @property string           $rrn
+ * @property string           $irn
  * @property string           $3ds_url
  * @property string           $3ds_post_data
  * @property boolean          $status
@@ -97,6 +99,16 @@ class Transfer extends Eloquent
 	public function card()
 	{
 		return $this->hasOne(Card::class, 'id', 'transfer_card_id');
+	}
+
+	/**
+	 * full amount with commission
+	 *
+	 * @return float
+	 */
+	public function getFullAmount()
+	{
+		return $this->fee + $this->amount;
 	}
 
 }

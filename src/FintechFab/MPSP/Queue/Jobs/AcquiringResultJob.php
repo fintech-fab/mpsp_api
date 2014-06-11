@@ -31,6 +31,10 @@ class AcquiringResultJob
 
 			$failed = isset($data['error']);
 
+			$transfer->irn = $data['irn'];
+			$transfer->rrn = $data['rrn'];
+			$transfer->save();
+
 			// требуется прохождение 3DS
 			if ($data['need_3ds']) {
 

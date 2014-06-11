@@ -3,6 +3,7 @@
 use DB;
 use FintechFab\MPSP\Entities\Currency;
 use Illuminate\Queue\Jobs\Job;
+use Log;
 
 class CalculateFeeResultJob
 {
@@ -20,6 +21,9 @@ class CalculateFeeResultJob
 	{
 		// получаем код валюты
 		$currency = $this->transferCurrency->offsetGet($data['currency']);
+
+
+		Log::debug('Fire CalculateFeeResultJob', $data);
 
 		// выбираем стоимость перевода из базы
 		DB::table('transfer_costs')
