@@ -12,6 +12,13 @@ class CitiesListResultJob extends AbstractJob
 
 	protected function run($data)
 	{
+
+		if(!$data){
+			Log::warning('Pull empty cities data list');
+			Queue::connection('gateway')->push('citiesList', []);
+			return;
+		}
+
 		$cities = $data['cities'];
 
 		$this->city->truncate();
