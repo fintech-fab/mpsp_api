@@ -38,8 +38,8 @@ class CreateTableTransfers extends Migration
 			$table->string('receiver_name');
 			$table->string('receiver_thirdname');
 			$table->string('receiver_city');
-			$table->string('rrn');
-			$table->string('irn');
+			$table->string('rrn')->nullable();
+			$table->string('irn')->nullable();
 
 			$table->string('3ds_url')->nullable();
 			$table->text('3ds_post_data')->nullable();

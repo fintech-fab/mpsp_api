@@ -1,9 +1,9 @@
 <?php namespace FintechFab\MPSP\Tests\Controllers;
 
-use FintechFab\MPSP\Tests\TestCase;
-use Illuminate\Queue\QueueInterface;
 use FintechFab\MPSP\Entities\Transfer;
 use FintechFab\MPSP\Repositories\TransferRepository;
+use FintechFab\MPSP\Tests\TestCase;
+use Illuminate\Queue\QueueInterface;
 use Queue;
 
 /**
@@ -14,6 +14,11 @@ use Queue;
 class AcquiringControllerTest extends TestCase
 {
 
+	/**
+	 * Перед запуском теста, заменяются те инстансы в IoC, которые мы не планируем здесь тестировать
+	 *
+	 * @see method mock
+	 */
 	public function setUp()
 	{
 		parent::setUp();
@@ -57,6 +62,8 @@ class AcquiringControllerTest extends TestCase
 				]
 			]);
 
+		// Все подмены действуют во время этого “как бы” http-запроса
+		// Цикл приложения (route -> filters -> controller -> action -> component -> view) работает, не подозревая о подменах и тестовом окружении
 		$response = $this->call('POST', 'acquiring/finish_3ds', [
 			'phone'   => $phone,
 			'code'    => $code,

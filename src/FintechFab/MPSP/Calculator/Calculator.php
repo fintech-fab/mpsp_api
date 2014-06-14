@@ -77,8 +77,9 @@ class Calculator
 			Log::debug('Found transferCosts', (array)$transferCosts);
 			if ($transferCosts->flag_query == 1 && $transferCosts->amount === '0.00' || $transferCosts->amount <= 0) {
 				Log::debug('Need reply calculator by empty amount');
-				DB::table('users')->where('id', $transferCosts->id)->update(array('flag_query' => 0));
+				DB::table('transfer_costs')->where('id', $transferCosts->id)->update(array('flag_query' => 0));
 				$transferCosts->flag_query = 0;
+
 			}
 		}
 
