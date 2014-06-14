@@ -1,6 +1,7 @@
 <?php namespace FintechFab\MPSP\Queue\Jobs;
 
 use FintechFab\MPSP\Entities\City;
+use Log;
 
 class CitiesListResultJob extends AbstractJob
 {
