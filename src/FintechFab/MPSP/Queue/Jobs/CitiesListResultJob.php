@@ -2,6 +2,7 @@
 
 use FintechFab\MPSP\Entities\City;
 use Log;
+use Queue;
 
 class CitiesListResultJob extends AbstractJob
 {
