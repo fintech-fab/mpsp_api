@@ -15,9 +15,10 @@ class CitiesListResultJob extends AbstractJob
 	protected function run($data)
 	{
 
-		if(!$data || empty($data['cities'])){
+		if (!$data || empty($data['cities'])) {
 			Log::warning('Pull empty cities data list');
 			Queue::connection('gateway')->push('citiesList', []);
+
 			return;
 		}
 
