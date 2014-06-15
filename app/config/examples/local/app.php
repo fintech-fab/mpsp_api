@@ -1,12 +1,12 @@
 <?php
 return [
 
-	'debug' => true,
+	'debug'     => true,
 
 	'key'       => 'random-key',
 
 	'providers' => [
-		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // ide-helper
+		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
 	],
 
 ];

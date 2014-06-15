@@ -6,12 +6,12 @@ return [
 		'mysql' => [
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'mpsp_api',
-			'username'  => 'root',
-			'password'  => '',
+			'database'  => 'forge',
+			'username'  => 'forge',
+			'password'  => '#dbpass#',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
-			'prefix'    => '',
+			'prefix'    => 'api_#confid#_',
 		],
 
 	],

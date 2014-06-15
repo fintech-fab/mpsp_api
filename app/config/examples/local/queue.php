@@ -7,17 +7,17 @@ return [
 		'api'     => [
 			'driver'  => 'iron',
 			'host'    => 'mq-aws-us-east-1.iron.io',
-			'token'   => 'your-token',
-			'project' => 'your-project-id',
-			'queue'   => 'api',
+			'token'   => '#irontoken#',
+			'project' => '#ironkey#',
+			'queue'   => 'api-#confid#',
 		],
 
 		'gateway' => [
 			'driver'  => 'iron',
 			'host'    => 'mq-aws-us-east-1.iron.io',
-			'token'   => 'your-token',
-			'project' => 'your-project-id',
-			'queue'   => 'gateway',
+			'token'   => '#irontoken#',
+			'project' => '#ironkey#',
+			'queue'   => 'gateway-#confid#',
 		],
 
 	],

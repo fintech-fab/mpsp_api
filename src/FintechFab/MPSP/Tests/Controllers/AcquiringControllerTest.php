@@ -15,9 +15,15 @@ class AcquiringControllerTest extends TestCase
 {
 
 	/**
+<<<<<<< HEAD
 	 * заменяем инстансы в IoC, которые не требуют тестирования
 	 *
 	 * ставим заглушку на подключение компонента Queue к серверу очередей
+=======
+	 * Перед запуском теста, заменяются те инстансы в IoC, которые мы не планируем здесь тестировать
+	 *
+	 * @see method mock
+>>>>>>> c848a071b27b10dcced4a1888bd40555addfaf36
 	 */
 	public function setUp()
 	{
@@ -66,7 +72,12 @@ class AcquiringControllerTest extends TestCase
 				]
 			]);
 
+<<<<<<< HEAD
 		// делаем запрос к роуту
+=======
+		// Все подмены действуют во время этого “как бы” http-запроса
+		// Цикл приложения (route -> filters -> controller -> action -> component -> view) работает, не подозревая о подменах и тестовом окружении
+>>>>>>> c848a071b27b10dcced4a1888bd40555addfaf36
 		$response = $this->call('POST', 'acquiring/finish_3ds', [
 			'phone'   => $phone,
 			'code'    => $code,
