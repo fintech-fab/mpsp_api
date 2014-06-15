@@ -1,9 +1,9 @@
 <?php namespace FintechFab\MPSP\Tests\Controllers;
 
-use FintechFab\MPSP\Tests\TestCase;
-use Illuminate\Queue\QueueInterface;
 use FintechFab\MPSP\Entities\Transfer;
 use FintechFab\MPSP\Repositories\TransferRepository;
+use FintechFab\MPSP\Tests\TestCase;
+use Illuminate\Queue\QueueInterface;
 use Queue;
 
 /**
@@ -14,6 +14,11 @@ use Queue;
 class AcquiringControllerTest extends TestCase
 {
 
+	/**
+	 * заменяем инстансы в IoC, которые не требуют тестирования
+	 *
+	 * ставим заглушку на подключение компонента Queue к серверу очередей
+	 */
 	public function setUp()
 	{
 		parent::setUp();
@@ -33,19 +38,23 @@ class AcquiringControllerTest extends TestCase
 		$MD = 'dzsd';
 		$TermUrl = 'dsadasdas';
 
+		// ищем трансфер по номеру телефона и коду
 		$this->transfers->shouldReceive('findByPhoneAndCode')
 			->with($phone, $code)
 			->andReturn($this->transfer)
 			->once();
 
+		// превращаем полученный трансфер в массив
 		$this->transfer->shouldReceive('toArray')
 			->andReturn(['transfer_array']);
 
+		// было установлено подключение к серверу очередей к очереди gateway
 		Queue::shouldReceive('connection')
 			->withArgs(['gateway'])
 			->andReturn($this->queue)
 			->once();
 
+		// задача ушла в сервер очередей
 		$this->queue->shouldReceive('push')
 			->withArgs([
 				'acquiringFinish3DS', [
@@ -57,6 +66,7 @@ class AcquiringControllerTest extends TestCase
 				]
 			]);
 
+		// делаем запрос к роуту
 		$response = $this->call('POST', 'acquiring/finish_3ds', [
 			'phone'   => $phone,
 			'code'    => $code,
@@ -64,6 +74,7 @@ class AcquiringControllerTest extends TestCase
 			'TermUrl' => $TermUrl,
 		]);
 
+		// запрос успешен
 		$this->assertResponseOk();
 
 		$response = $response->getOriginalContent();

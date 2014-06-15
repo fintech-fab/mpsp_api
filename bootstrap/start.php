@@ -24,11 +24,9 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-$env = $app->detectEnvironment(array(
-
-	'local' => ['sandbox*', '*.local'],
-
-));
+$env = $app->detectEnvironment(function () {
+	return 'local';
+});
 
 /*
 |--------------------------------------------------------------------------
